@@ -1,127 +1,211 @@
-import React from 'react';
-import { FaUser, FaEnvelope, FaLock, FaCalendar, FaVenusMars } from 'react-icons/fa';
+import React, { useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { ChevronDownIcon, Eye, EyeOff } from "lucide-react";
 
-const Step1 = ({}) => {
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+const Step1 = () => {
+  const [open, setOpen] = useState(false);
+  const [date, setDate] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConPassword, setShowConPassword] = useState(false);
 
   return (
-    <div className="max-w-md mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-        User Profile
-      </h2>
-      
-      <div className="space-y-6">
-        {/* Full Name Field */}
-        <div className="relative">
-          <input
-            type="text"
-            name="fullName"
-            value={formData.fullName || ''}
-            onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-md peer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder=" "
-          />
-          <label className="absolute left-4 top-3 text-gray-500 transition-all duration-200 pointer-events-none peer-focus:text-xs peer-focus:top-1 peer-focus:text-blue-600 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base">
-            Full Name
-          </label>
-          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <FaUser className="text-gray-500" />
-          </div>
-        </div>
+    <div className="max-w-5xl flex flex-col gap-5 mx-auto">
+      {/* Full Name */}
+      <div className="relative">
+        <Input
+          type="text"
+          name="fullName"
+          className="peer text-whitefull text-white  px-5 pt-6 pb-5 border border-gray-300 rounded-md 
+                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent select-text 
+                     selection:bg-blue-500 selection:text-white"
+          placeholder=" "
+        />
+        <Label
+          htmlFor="fullName"
+          className="absolute left-4 -top-0 px-1 text-gray-400 transition-all duration-200 bg-none pointer-events-none
+                     peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+                     peer-focus:left-2 peer-focus:-top-1 peer-focus:bg-black peer-focus:text-xs peer-focus:text-blue-600
+                     peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:left-2 peer-[&:not(:placeholder-shown)]:bg-black
+                     peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-white"
+        >
+          Your Name
+        </Label>
+      </div>
 
-        {/* Email Field */}
-        <div className="relative">
-          <input
-            type="email"
-            name="email"
-            value={formData.email || ''}
-            onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-md peer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder=" "
-          />
-          <label className="absolute left-4 top-3 text-gray-500 transition-all duration-200 pointer-events-none peer-focus:text-xs peer-focus:top-1 peer-focus:text-blue-600 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base">
-            Email
-          </label>
-          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <FaEnvelope className="text-gray-500" />
-          </div>
-        </div>
+      {/* Email */}
+      <div className="relative">
+        <Input
+          type="email"
+          name="email"
+          className="peer text-whitefull text-white px-5 pt-6 pb-5 border border-gray-300 rounded-md 
+                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent select-text 
+                     selection:bg-blue-500 selection:text-white"
+          placeholder=" "
+        />
+        <Label
+          htmlFor="email"
+          className="absolute left-4 -top-0 peer-focus:bg-black px-1 text-gray-400 transition-all duration-200 pointer-events-none
+                     peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+                     peer-focus:left-2 peer-focus:-top-1 peer-focus:text-xs peer-focus:text-blue-600
+                     peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:left-2 peer-[&:not(:placeholder-shown)]:bg-black
+                     peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-white"
+        >
+          Email
+        </Label>
+      </div>
 
-        {/* Password Field */}
-        <div className="relative">
-          <input
-            type="password"
-            name="password"
-            value={formData.password || ''}
-            onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-md peer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder=" "
-          />
-          <label className="absolute left-4 top-3 text-gray-500 transition-all duration-200 pointer-events-none peer-focus:text-xs peer-focus:top-1 peer-focus:text-blue-600 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base">
-            Password
-          </label>
-          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <FaLock className="text-gray-500" />
-          </div>
-        </div>
+      {/* Password */}
+      <div className="relative">
+        <Input
+          type={showPassword ? "text" : "password"}
+          name="password"
+          className="peer text-whitefull text-white px-5 pt-6 pb-5 border border-gray-300 rounded-md 
+               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent select-text 
+               selection:bg-blue-500 selection:text-white"
+          placeholder=" "
+        />
+        <Label
+          htmlFor="password"
+          className="absolute left-4 -top-0 peer-focus:bg-black px-1 text-gray-400 transition-all duration-200 pointer-events-none
+               peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+               peer-focus:left-2 peer-focus:-top-1 peer-focus:text-xs peer-focus:text-blue-600
+               peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:left-2 peer-[&:not(:placeholder-shown)]:bg-black
+               peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-white"
+        >
+          Password
+        </Label>
 
-        {/* Confirm Password Field */}
-        <div className="relative">
-          <input
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword || ''}
-            onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-md peer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder=" "
-          />
-          <label className="absolute left-4 top-3 text-gray-500 transition-all duration-200 pointer-events-none peer-focus:text-xs peer-focus:top-1 peer-focus:text-blue-600 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base">
-            Confirm Password
-          </label>
-          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <FaLock className="text-gray-500" />
-          </div>
-        </div>
+        <Eye
+         size={20}
+          onClick={() => setShowPassword(true)}
+          className={`${
+            showPassword ? "hidden" : "block"
+          } text-white cursor-pointer right-4 absolute top-3`}
+        />
+        <EyeOff
+         size={20}
+          onClick={() => setShowPassword(false)}
+          className={`${
+            showPassword ? "block" : "hidden"
+          } text-white cursor-pointer right-4 absolute top-3`}
+        />
+      </div>
 
-        {/* Gender Field */}
-        <div className="space-y-2">
-          <div className="flex items-center text-gray-700">
-            <FaVenusMars className="text-gray-500 mr-2" />
-            <span>Gender</span>
-          </div>
-          <div className="flex space-x-4 ml-6">
-            {['Male', 'Female', 'Other'].map((gender) => (
-              <label key={gender} className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="gender"
-                  value={gender}
-                  checked={formData.gender === gender}
-                  onChange={handleChange}
-                  className="text-blue-600 focus:ring-blue-500"
-                />
-                <span>{gender}</span>
-              </label>
-            ))}
-          </div>
-        </div>
+      {/* Confirm Password */}
+      <div className="relative">
+        <Input
+          type={showConPassword ? "text" : "password"}
+          name="confirmPassword"
+          className="peer text-whitefull text-white px-5 pt-6 pb-5 border border-gray-300 rounded-md 
+                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent select-text 
+                     selection:bg-blue-500 selection:text-white"
+          placeholder=" "
+        />
+        <Label
+          htmlFor="confirmPassword"
+          className="absolute left-4 -top-0 peer-focus:bg-black px-1 text-gray-400 transition-all duration-200 pointer-events-none
+                     peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+                     peer-focus:left-2 peer-focus:-top-1 peer-focus:text-xs peer-focus:text-blue-600
+                     peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:left-2 peer-[&:not(:placeholder-shown)]:bg-black
 
-        {/* Date of Birth Field */}
-        <div className="relative">
-          <input
-            type="date"
-            name="dob"
-            value={formData.dob || ''}
-            onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-md peer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder=" "
-          />
-          <label className="absolute left-4 top-3 text-gray-500 transition-all duration-200 pointer-events-none peer-focus:text-xs peer-focus:top-1 peer-focus:text-blue-600 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base">
-            Date of Birth
-          </label>
-          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <FaCalendar className="text-gray-500" />
+                     peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-white"
+        >
+          Confirm Password
+        </Label>
+        <Eye
+        size={20}
+          onClick={() => setShowConPassword(true)}
+          className={`${
+            showConPassword ? "hidden" : "block"
+          } text-white cursor-pointer right-4 absolute top-3`}
+        />
+        <EyeOff
+         size={20}
+          onClick={() => setShowConPassword(false)}
+          className={`${
+            showConPassword ? "block" : "hidden"
+          } text-white cursor-pointer right-4 absolute top-3`}
+        />
+      </div>
+
+      {/* Gender */}
+      <div className="relative flex flex-col gap-3">
+        {/* Gender Label */}
+        <Label className="px-1 text-white">Gender</Label>
+
+        <RadioGroup defaultValue="male" className="flex gap-10">
+          <div className="flex items-center gap-3">
+            <RadioGroupItem
+              value="male"
+              id="r1"
+              className="border-gray-400 text-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+            />
+            <Label className="text-white" htmlFor="r1">
+              Male
+            </Label>
           </div>
-        </div>
+
+          <div className="flex items-center gap-3">
+            <RadioGroupItem
+              value="female"
+              id="r2"
+              className="border-gray-400 text-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+            />
+            <Label className="text-white" htmlFor="r2">
+              Female
+            </Label>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <RadioGroupItem
+              value="notToSay"
+              id="r3"
+              className="border-gray-400 text-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+            />
+            <Label className="text-white" htmlFor="r3">
+              Prefer Not to Say
+            </Label>
+          </div>
+        </RadioGroup>
+      </div>
+
+      {/* Date of Birth */}
+      <div className="flex  flex-col gap-3">
+        <Label htmlFor="date" className="px-1 text-white">
+          Date of birth
+        </Label>
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              id="date"
+              className="text-white48 justify-between font-normal"
+            >
+              {date ? date.toLocaleDateString() : "Select date"}
+              <ChevronDownIcon />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="text-whiteauto overflotext-whitehidden p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={(d) => {
+                setDate(d);
+                setOpen(false);
+              }}
+            />
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   );

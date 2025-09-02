@@ -5,7 +5,7 @@ import Form from "./pages/Form";
 
 function App() {
   return (
-    <div class="bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-dark)] to-[var(--color-secondary)]">
+    <div className="bg-black">
       <Routes>
         <Route index path="/" element={<Form />} />
       </Routes>
