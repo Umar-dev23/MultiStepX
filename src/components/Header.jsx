@@ -10,8 +10,6 @@ const Header = () => {
   bg-clip-text text-transparent">
   Introducing MultiStepX...
 </h1>
-
-
       <p className="text-violet-200/80 text-lg font-medium">
         Complete your profile in a few simple steps
       </p>

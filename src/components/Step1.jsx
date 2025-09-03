@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ChevronDownIcon, Eye, EyeOff } from "lucide-react";
-
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -12,111 +11,131 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useFormContext } from "react-hook-form";
 
 const Step1 = ({ onProgress }) => {
-  // keep your original visual classes exactly the same
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConPassword, setShowConPassword] = useState(false);
 
-  // minimal form state (no styling changes)
-  const [form, setForm] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    gender: "",
-    dob: null,
-  });
+  const {
+    register,
+    formState: { errors },
+    watch,
+  } = useFormContext();
 
-  const update = (field, value) => {
-    setForm((p) => ({ ...p, [field]: value }));
-  };
+  // Watch fields for progress
+  const watchedFields = watch([
+    "profile.fullName",
+    "profile.email",
+    "profile.password",
+    "profile.confirmPassword",
+    "profile.gender",
+    "profile.dob",
+  ]);
 
-  // compute progress from fields and send to parent
   useEffect(() => {
-    const total = 6; // fields counted: fullName,email,password,confirmPassword,gender,dob
-    const filled = Object.values(form).filter(
-      (v) => v !== "" && v !== null
+    const total = 6; // fullname,email,password,confirmPassword,gender,dob
+    const filled = watchedFields.filter(
+      (v) => v !== "" && v !== null && v !== undefined
     ).length;
     const progress = Math.round((filled / total) * 100);
     onProgress?.(progress);
-  }, [form, onProgress]);
+  }, [watchedFields, onProgress]);
 
   return (
-    <div className="max-w-5xl flex flex-col gap-5 mx-auto">
+    <div className="flex flex-col w-full gap-6 mx-auto">
       {/* Full Name */}
       <div className="relative">
         <Input
           type="text"
-          name="fullName"
-          value={form.fullName}
-          onChange={(e) => update("fullName", e.target.value)}
-          className="peer text-whitefull text-white  px-5 pt-6 pb-5 border border-gray-300 rounded-md 
-                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent select-text 
-                     selection:bg-blue-500 selection:text-white"
+          {...register("profile.fullName", {
+            required: "Fullname is required",
+          })}
+          className="peer text-white px-5 pt-6 pb-5 border border-gray-300 rounded-md"
           placeholder=" "
         />
         <Label
           htmlFor="fullName"
-          className="absolute left-4 -top-0 px-1 text-gray-400 transition-all duration-200 bg-none pointer-events-none
-                     peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-                     peer-focus:left-2 peer-focus:-top-1 peer-focus:bg-black peer-focus:text-xs peer-focus:text-blue-600
-                     peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:left-2 peer-[&:not(:placeholder-shown)]:bg-black
+          className="absolute left-4 -top-0 px-1 text-gray-400 transition-all duration-200 pointer-events-none
+                     peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2
+                     peer-placeholder-shown:text-sm peer-focus:left-2 peer-focus:-top-1 peer-focus:bg-black
+                     peer-focus:text-xs peer-focus:text-blue-600 peer-[&:not(:placeholder-shown)]:-top-2
+                     peer-[&:not(:placeholder-shown)]:left-2 peer-[&:not(:placeholder-shown)]:bg-black
                      peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-white"
         >
           Your Name
         </Label>
       </div>
+      {errors.profile?.fullName && (
+        <p className="text-red-500 text-sm mt-[-15px]">
+          {errors.profile.fullName.message}
+        </p>
+      )}
 
       {/* Email */}
       <div className="relative">
         <Input
           type="email"
-          name="email"
-          value={form.email}
-          onChange={(e) => update("email", e.target.value)}
-          className="peer text-whitefull text-white px-5 pt-6 pb-5 border border-gray-300 rounded-md 
-                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent select-text 
-                     selection:bg-blue-500 selection:text-white"
+          {...register("profile.email", {
+            required: "Email is required",
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: "Invalid Email Format",
+            },
+          })}
+          className="peer text-white px-5 pt-6 pb-5 border border-gray-300 rounded-md"
           placeholder=" "
         />
         <Label
           htmlFor="email"
-          className="absolute left-4 -top-0 peer-focus:bg-black px-1 text-gray-400 transition-all duration-200 pointer-events-none
-                     peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-                     peer-focus:left-2 peer-focus:-top-1 peer-focus:text-xs peer-focus:text-blue-600
-                     peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:left-2 peer-[&:not(:placeholder-shown)]:bg-black
+          className="absolute left-4 -top-0 px-1 text-gray-400 transition-all duration-200 pointer-events-none
+                     peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2
+                     peer-placeholder-shown:text-sm peer-focus:left-2 peer-focus:-top-1 peer-focus:bg-black
+                     peer-focus:text-xs peer-focus:text-blue-600 peer-[&:not(:placeholder-shown)]:-top-2
+                     peer-[&:not(:placeholder-shown)]:left-2 peer-[&:not(:placeholder-shown)]:bg-black
                      peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-white"
         >
           Email
         </Label>
       </div>
+      {errors.profile?.email && (
+        <p className="text-red-500 text-sm mt-[-15px]">
+          {errors.profile.email.message}
+        </p>
+      )}
 
       {/* Password */}
       <div className="relative">
         <Input
           type={showPassword ? "text" : "password"}
-          name="password"
-          value={form.password}
-          onChange={(e) => update("password", e.target.value)}
-          className="peer text-whitefull text-white px-5 pt-6 pb-5 border border-gray-300 rounded-md 
-               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent select-text 
-               selection:bg-blue-500 selection:text-white"
+          {...register("profile.password", {
+            required: "Password is required",
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters",
+            },
+            pattern: {
+              value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/,
+              message:
+                "Password must include uppercase, lowercase, number, and special character",
+            },
+          })}
+          className="peer text-white px-5 pt-6 pb-5 border border-gray-300 rounded-md"
           placeholder=" "
         />
         <Label
           htmlFor="password"
-          className="absolute left-4 -top-0 peer-focus:bg-black px-1 text-gray-400 transition-all duration-200 pointer-events-none
-               peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-               peer-focus:left-2 peer-focus:-top-1 peer-focus:text-xs peer-focus:text-blue-600
-               peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:left-2 peer-[&:not(:placeholder-shown)]:bg-black
-               peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-white"
+          className="absolute left-4 -top-0 px-1 text-gray-400 transition-all duration-200 pointer-events-none
+                     peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2
+                     peer-placeholder-shown:text-sm peer-focus:left-2 peer-focus:-top-1 peer-focus:bg-black
+                     peer-focus:text-xs peer-focus:text-blue-600 peer-[&:not(:placeholder-shown)]:-top-2
+                     peer-[&:not(:placeholder-shown)]:left-2 peer-[&:not(:placeholder-shown)]:bg-black
+                     peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-white"
         >
           Password
         </Label>
-
         <Eye
           size={20}
           onClick={() => setShowPassword(true)}
@@ -132,26 +151,34 @@ const Step1 = ({ onProgress }) => {
           } text-white cursor-pointer right-4 absolute top-3`}
         />
       </div>
+      {errors.profile?.password && (
+        <p className="text-red-500 text-sm mt-[-15px]">
+          {errors.profile.password.message}
+        </p>
+      )}
 
       {/* Confirm Password */}
       <div className="relative">
         <Input
           type={showConPassword ? "text" : "password"}
-          name="confirmPassword"
-          value={form.confirmPassword}
-          onChange={(e) => update("confirmPassword", e.target.value)}
-          className="peer text-whitefull text-white px-5 pt-6 pb-5 border border-gray-300 rounded-md 
-                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent select-text 
-                     selection:bg-blue-500 selection:text-white"
+          {...register("profile.confirmPassword", {
+            required: "Confirm Password is required",
+            validate: (val) => {
+              if (val !== watch("profile.password")) {
+                return "Passwords do not match";
+              }
+            },
+          })}
+          className="peer text-white px-5 pt-6 pb-5 border border-gray-300 rounded-md"
           placeholder=" "
         />
         <Label
           htmlFor="confirmPassword"
-          className="absolute left-4 -top-0 peer-focus:bg-black px-1 text-gray-400 transition-all duration-200 pointer-events-none
-                     peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-                     peer-focus:left-2 peer-focus:-top-1 peer-focus:text-xs peer-focus:text-blue-600
-                     peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:left-2 peer-[&:not(:placeholder-shown)]:bg-black
-
+          className="absolute left-4 -top-0 px-1 text-gray-400 transition-all duration-200 pointer-events-none
+                     peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2
+                     peer-placeholder-shown:text-sm peer-focus:left-2 peer-focus:-top-1 peer-focus:bg-black
+                     peer-focus:text-xs peer-focus:text-blue-600 peer-[&:not(:placeholder-shown)]:-top-2
+                     peer-[&:not(:placeholder-shown)]:left-2 peer-[&:not(:placeholder-shown)]:bg-black
                      peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-white"
         >
           Confirm Password
@@ -171,54 +198,47 @@ const Step1 = ({ onProgress }) => {
           } text-white cursor-pointer right-4 absolute top-3`}
         />
       </div>
+      {errors.profile?.confirmPassword && (
+        <p className="text-red-500 text-sm mt-[-15px]">
+          {errors.profile.confirmPassword.message}
+        </p>
+      )}
 
       {/* Gender */}
       <div className="relative flex flex-col gap-3">
-        {/* Gender Label */}
         <Label className="px-1 text-white">Gender</Label>
-
         <RadioGroup
-          value={form.gender}
-          onValueChange={(val) => update("gender", val)}
+          {...register("profile.gender", { required: "Gender is required" })}
           className="flex gap-10"
         >
           <div className="flex items-center gap-3">
-            <RadioGroupItem
-              value="male"
-              id="r1"
-              className="border-gray-400 text-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-            />
+            <RadioGroupItem value="male" id="r1" />
             <Label className="text-white" htmlFor="r1">
               Male
             </Label>
           </div>
-
           <div className="flex items-center gap-3">
-            <RadioGroupItem
-              value="female"
-              id="r2"
-              className="border-gray-400 text-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-            />
+            <RadioGroupItem value="female" id="r2" />
             <Label className="text-white" htmlFor="r2">
               Female
             </Label>
           </div>
-
           <div className="flex items-center gap-3">
-            <RadioGroupItem
-              value="notToSay"
-              id="r3"
-              className="border-gray-400 text-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-            />
+            <RadioGroupItem value="notToSay" id="r3" />
             <Label className="text-white" htmlFor="r3">
               Prefer Not to Say
             </Label>
           </div>
         </RadioGroup>
       </div>
+      {errors.profile?.gender && (
+        <p className="text-red-500 text-sm mt-[-15px]">
+          {errors.profile.gender.message}
+        </p>
+      )}
 
       {/* Date of Birth */}
-      <div className="flex  flex-col gap-3">
+      <div className="flex flex-col gap-3">
         <Label htmlFor="date" className="px-1 text-white">
           Date of birth
         </Label>
@@ -227,28 +247,36 @@ const Step1 = ({ onProgress }) => {
             <Button
               variant="outline"
               id="date"
-              className="text-white48 justify-between font-normal"
+              className="justify-between font-normal"
             >
-              {form.dob ? form.dob.toLocaleDateString() : "Select date"}
+              {watch("profile.dob")
+                ? new Date(watch("profile.dob")).toLocaleDateString()
+                : "Select date"}
               <ChevronDownIcon />
             </Button>
           </PopoverTrigger>
-          <PopoverContent
-            className="text-whiteauto overflotext-whitehidden p-0"
-            align="start"
-          >
+          <PopoverContent className="p-0" align="start">
             <Calendar
               mode="single"
-              selected={form.dob}
+              selected={watch("profile.dob")}
               onSelect={(d) => {
-                update("dob", d);
-                setDate(d);
-                setOpen(false);
+                if (d) {
+                  // manually set dob in form
+                  const event = { target: { name: "profile.dob", value: d } };
+                  register("profile.dob").onChange(event);
+                  setDate(d);
+                  setOpen(false);
+                }
               }}
             />
           </PopoverContent>
         </Popover>
       </div>
+      {errors.profile?.dob && (
+        <p className="text-red-500 text-sm mt-[-15px]">
+          {errors.profile.dob.message}
+        </p>
+      )}
     </div>
   );
 };
