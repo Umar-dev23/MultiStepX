@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// Step1.jsx
+import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ChevronDownIcon, Eye, EyeOff } from "lucide-react";
@@ -12,11 +13,36 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-const Step1 = () => {
+const Step1 = ({ onProgress }) => {
+  // keep your original visual classes exactly the same
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConPassword, setShowConPassword] = useState(false);
+
+  // minimal form state (no styling changes)
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    gender: "",
+    dob: null,
+  });
+
+  const update = (field, value) => {
+    setForm((p) => ({ ...p, [field]: value }));
+  };
+
+  // compute progress from fields and send to parent
+  useEffect(() => {
+    const total = 6; // fields counted: fullName,email,password,confirmPassword,gender,dob
+    const filled = Object.values(form).filter(
+      (v) => v !== "" && v !== null
+    ).length;
+    const progress = Math.round((filled / total) * 100);
+    onProgress?.(progress);
+  }, [form, onProgress]);
 
   return (
     <div className="max-w-5xl flex flex-col gap-5 mx-auto">
@@ -25,6 +51,8 @@ const Step1 = () => {
         <Input
           type="text"
           name="fullName"
+          value={form.fullName}
+          onChange={(e) => update("fullName", e.target.value)}
           className="peer text-whitefull text-white  px-5 pt-6 pb-5 border border-gray-300 rounded-md 
                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent select-text 
                      selection:bg-blue-500 selection:text-white"
@@ -47,6 +75,8 @@ const Step1 = () => {
         <Input
           type="email"
           name="email"
+          value={form.email}
+          onChange={(e) => update("email", e.target.value)}
           className="peer text-whitefull text-white px-5 pt-6 pb-5 border border-gray-300 rounded-md 
                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent select-text 
                      selection:bg-blue-500 selection:text-white"
@@ -69,6 +99,8 @@ const Step1 = () => {
         <Input
           type={showPassword ? "text" : "password"}
           name="password"
+          value={form.password}
+          onChange={(e) => update("password", e.target.value)}
           className="peer text-whitefull text-white px-5 pt-6 pb-5 border border-gray-300 rounded-md 
                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent select-text 
                selection:bg-blue-500 selection:text-white"
@@ -86,14 +118,14 @@ const Step1 = () => {
         </Label>
 
         <Eye
-         size={20}
+          size={20}
           onClick={() => setShowPassword(true)}
           className={`${
             showPassword ? "hidden" : "block"
           } text-white cursor-pointer right-4 absolute top-3`}
         />
         <EyeOff
-         size={20}
+          size={20}
           onClick={() => setShowPassword(false)}
           className={`${
             showPassword ? "block" : "hidden"
@@ -106,6 +138,8 @@ const Step1 = () => {
         <Input
           type={showConPassword ? "text" : "password"}
           name="confirmPassword"
+          value={form.confirmPassword}
+          onChange={(e) => update("confirmPassword", e.target.value)}
           className="peer text-whitefull text-white px-5 pt-6 pb-5 border border-gray-300 rounded-md 
                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent select-text 
                      selection:bg-blue-500 selection:text-white"
@@ -123,14 +157,14 @@ const Step1 = () => {
           Confirm Password
         </Label>
         <Eye
-        size={20}
+          size={20}
           onClick={() => setShowConPassword(true)}
           className={`${
             showConPassword ? "hidden" : "block"
           } text-white cursor-pointer right-4 absolute top-3`}
         />
         <EyeOff
-         size={20}
+          size={20}
           onClick={() => setShowConPassword(false)}
           className={`${
             showConPassword ? "block" : "hidden"
@@ -143,7 +177,11 @@ const Step1 = () => {
         {/* Gender Label */}
         <Label className="px-1 text-white">Gender</Label>
 
-        <RadioGroup defaultValue="male" className="flex gap-10">
+        <RadioGroup
+          value={form.gender}
+          onValueChange={(val) => update("gender", val)}
+          className="flex gap-10"
+        >
           <div className="flex items-center gap-3">
             <RadioGroupItem
               value="male"
@@ -191,15 +229,19 @@ const Step1 = () => {
               id="date"
               className="text-white48 justify-between font-normal"
             >
-              {date ? date.toLocaleDateString() : "Select date"}
+              {form.dob ? form.dob.toLocaleDateString() : "Select date"}
               <ChevronDownIcon />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="text-whiteauto overflotext-whitehidden p-0" align="start">
+          <PopoverContent
+            className="text-whiteauto overflotext-whitehidden p-0"
+            align="start"
+          >
             <Calendar
               mode="single"
-              selected={date}
+              selected={form.dob}
               onSelect={(d) => {
+                update("dob", d);
                 setDate(d);
                 setOpen(false);
               }}
